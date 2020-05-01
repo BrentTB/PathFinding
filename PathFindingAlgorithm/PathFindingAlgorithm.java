@@ -18,20 +18,23 @@ import java.util.*;
  */
 public class PathFindingAlgorithm {
 
-    static int numPaths = 10;
-//    static int numPaths = 9;
+    static int numPaths;
 
     public static void main(String[] args) throws IOException {
         //make a path finding algorithm that given a set of 1 way / 2 way paths, will get you from a start point to an end point
         PathFindingAlgorithm temp = new PathFindingAlgorithm();
-//        temp.start("a", "b");//go from a to b
+//        temp.start("a", "g");//go from a to g
         temp.start("1", "628");
 
     }
 
-    public void setUpFile() throws IOException {//used to add distances to a list of nodes seporated by a space ina  txt file named "nodes.txt"
+    public void setUpFile() throws IOException {//used to add distances to a list of nodes seporated by a space in a txt file named "nodes.txt"
 
-        Scanner read = new Scanner(new FileReader("nodes.txt"));
+        
+        String TXTFile="nodes.txt";
+        
+        
+        Scanner read = new Scanner(new FileReader(TXTFile));
         StringBuilder build = new StringBuilder();
         while (read.hasNextLine()) {
             Scanner read1 = new Scanner(read.nextLine()).useDelimiter(" ");
@@ -41,20 +44,19 @@ public class PathFindingAlgorithm {
         }
         read.close();
 
-        PrintWriter write = new PrintWriter(new FileWriter("nodes.txt", false));
+        PrintWriter write = new PrintWriter(new FileWriter(TXTFile, false));
         write.append(build);
 
     }
 
     public void start(String start, String end) throws FileNotFoundException {
 
-        HashMap paths = new HashMap(); // takes a start +""+ end point and returns the distance
+        HashMap paths = new HashMap(); // takes a start +""+ end point and returns the distance between them
         ArrayList<String> nodes = new ArrayList<>(); // stores the names of all the nodes
 
-        graph[] verticies = putVertcicies();//stores all paths and their distances
-        //   System.out.println(numPaths);
-        putHashMap(paths, verticies);
-        int[] endNode = getnodes(verticies, nodes, end, start);
+        graph[] verticies = putVertcicies();// stores all paths and their distances
+        putHashMap(paths, verticies); // setting up the hashmap
+        int[] endNode = getnodes(verticies, nodes, end, start);//setting up the nodes, and getting the array index of the start and end node
 
         int[] distFromStart = new int[nodes.size()];
         String[] path = new String[nodes.size()];
@@ -62,18 +64,19 @@ public class PathFindingAlgorithm {
             distFromStart[i] = 0;
         }
         
-        
-        
-//        getPathNormal(start, nodes, paths, distFromStart, path, 0, start);
+//        getPathNormal(start, nodes, paths, distFromStart, path, 0, start);//un commenting one of these will decide which algorithm to use
         getPathDjakstra(endNode[0], nodes, paths, distFromStart, path);
 
-        System.out.println(distFromStart[endNode[1]] + "\n" + path[endNode[1]]);
+        System.out.println(distFromStart[endNode[1]] + "\n" + path[endNode[1]]);//print out the distance from the start to end and the path
     }
 
     public graph[] putVertcicies() throws FileNotFoundException {//save all distances and nodes. all distances must be >0
 
-numPaths=0;
-        Scanner read = new Scanner(new FileReader("nodes.txt"));
+numPaths=0;//read the nodes and paths from a text file
+
+
+        String TXTFile="nodes.txt";
+        Scanner read = new Scanner(new FileReader(TXTFile));
        ArrayList<String> temp = new ArrayList<>();
         while(read.hasNextLine()){
         temp.add(read.nextLine());
@@ -87,7 +90,7 @@ numPaths=0;
         
         
         
-        
+        //2 sets of nodes and distances to use as a test
         
 //        numPaths = 10;
 //        graph[] vert = new graph[numPaths];
@@ -116,6 +119,9 @@ numPaths=0;
 //        vert[6]= new graph("c","f",2,false);
 //        vert[7]= new graph("d","e",6,false);
 //        vert[8]= new graph("e","f",9,false);
+        
+        
+        
         return vert;
     }
 
@@ -134,25 +140,24 @@ numPaths=0;
 
     public int[] getnodes(graph[] vert, ArrayList nodes, String end, String start) {
         int[] endNode = new int[2];
-        int startnode;
         for (int i = 0; i < numPaths; i++) {
             if (!nodes.contains(vert[i].getP1())) {
                 nodes.add(vert[i].getP1());
-                if (vert[i].getP1().equals(end)) {
-                    endNode[1] = nodes.size() - 1;//the node of the end destrination is the last one added to the ArrayList
-                }
                 if (vert[i].getP1().equals(start)) {
-                    endNode[0] = nodes.size() - 1;//the node of the end destrination is the last one added to the ArrayList
+                    endNode[0] = nodes.size() - 1;//the node of the start destination is the last one added to the ArrayList at this point
+                }
+                if (vert[i].getP1().equals(end)) {
+                    endNode[1] = nodes.size() - 1;//the node of the end destination is the last one added to the ArrayList at this point
                 }
 
             }
             if (!nodes.contains(vert[i].getP2())) {
                 nodes.add(vert[i].getP2());
-                if (vert[i].getP2().equals(end)) {
-                    endNode[1] = nodes.size() - 1;
-                }
                 if (vert[i].getP2().equals(start)) {
-                    endNode[0] = nodes.size() - 1;//the node of the end destrination is the last one added to the ArrayList
+                    endNode[0] = nodes.size() - 1;//the node of the start destination is the last one added to the ArrayList at this point
+                }
+                if (vert[i].getP2().equals(end)) {
+                    endNode[1] = nodes.size() - 1;//the node of the end destination is the last one added to the ArrayList at this point
                 }
             }
 
@@ -162,9 +167,9 @@ numPaths=0;
 
     public class graph {
 
-        private String p1, p2;
+        private final String p1, p2;
         private int distance;
-        private boolean twoWay;
+        private final boolean twoWay;
 
         public graph(String p1, String p2, int distance, boolean twoWay) {
             this.p1 = p1;
@@ -189,7 +194,7 @@ numPaths=0;
             return twoWay;
         }
 
-        public void setDistance(int distance) {
+        public void setDistance(int distance) {//only used when setting up a TXT file
             this.distance = distance;
         }
 
@@ -207,8 +212,8 @@ numPaths=0;
                         distFromStart[i] = dist;
                         pathFromStart[i] = path;
                     }
-                    getPathNormal("" + nodes.get(i), nodes, paths, distFromStart, pathFromStart, dist, path);
-                    dist -= Integer.parseInt("" + paths.get(nodeOn + "" + nodes.get(i)));
+                    getPathNormal("" + nodes.get(i), nodes, paths, distFromStart, pathFromStart, dist, path);//check the distaces from this new node to all other nodes
+                    dist -= Integer.parseInt("" + paths.get(nodeOn + "" + nodes.get(i)));//undo any changes that happened in the recursive function
                     path = path.substring(0, path.length() - 3);
                 }
             }
@@ -217,36 +222,33 @@ numPaths=0;
 
     }
 
-    public void getPathDjakstra(int nodeOn, ArrayList nodes, HashMap paths, int[] distFromStart, String[] pathFromStart) {//try to optimise?
-        boolean[] checked = new boolean[nodes.size()];
-        boolean[] needToBeChecked=new boolean[nodes.size()];
-        pathFromStart[nodeOn] = "" + nodes.get(nodeOn);  
-        int nodeNum=nodeOn;
-        while (nodeNum != -1) {
+    public void getPathDjakstra(int nodeOn, ArrayList nodes, HashMap paths, int[] distFromStart, String[] pathFromStart) {//try to optimise / reduce code
+        boolean[] checked = new boolean[nodes.size()];//all the nodes that have been checked (all paths from that node have been covered)
+        boolean[] needToBeChecked=new boolean[nodes.size()];//all the nodes that need to be checked
+        pathFromStart[nodeOn] = "" + nodes.get(nodeOn);
+        int nodeNum=nodeOn;//nodeNum is used to find the next node to check, at the beginning it must be the starting node
+        while (nodeNum != -1) {//while there are more nodes to be checked
 
-            for (int i = 0; i < nodes.size(); i++) {
+            for (int i = 0; i < nodes.size(); i++) {//check for each node
 
-                if (paths.get(nodes.get(nodeOn) + "" + nodes.get(i)) != null && !checked[i]) {
+                if (paths.get(nodes.get(nodeOn) + "" + nodes.get(i)) != null && !checked[i]) {//if there is a path between the node were on and the node given by the loop
                     int path = Integer.parseInt("" + paths.get(nodes.get(nodeOn) + "" + nodes.get(i)));
                     needToBeChecked[i]=true;
-                    if (distFromStart[i] > path || distFromStart[i] == 0) {
-                        distFromStart[i] = distFromStart[nodeOn] +path;
-                        pathFromStart[i] = pathFromStart[nodeOn] + "->" + nodes.get(i);
+                    if (distFromStart[i] > path || distFromStart[i] == 0) {//if the new node has no distance ( == 0) or the distance is bigger than our current path
+                        distFromStart[i] = distFromStart[nodeOn] +path;//give the new node the current nodes distance plus the distance between them
+                        pathFromStart[i] = pathFromStart[nodeOn] + "->" + nodes.get(i);//the same with the path
                     }
 
                 }
 
             }
-            checked[nodeOn] = true;//the int of the start num
-            needToBeChecked[nodeOn]=false;
-            
-            
-        
+            checked[nodeOn] = true;//the current node has now been checked
+            needToBeChecked[nodeOn]=false;//and it doesn't need to be checked 
             
             
             int min=-1;
-             nodeNum=-1;
-            for (int i = 0; i < nodes.size(); i++) {
+             nodeNum=-1;//set as -1 to see when there are no more nodes
+            for (int i = 0; i < nodes.size(); i++) {//find the node with the smallest distance, of all nodes that must be checked
                 if(needToBeChecked[i] && (distFromStart[i]<min || min==-1 )){
                 min=distFromStart[i];
                 nodeNum=i;
