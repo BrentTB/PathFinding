@@ -24,7 +24,7 @@ public class PathFindingAlgorithm {
         //make a path finding algorithm that given a set of 1 way / 2 way paths, will get you from a start point to an end point
         PathFindingAlgorithm temp = new PathFindingAlgorithm();
 //        temp.start("a", "g");//go from a to g
-        temp.start("1", "628");
+        temp.start("1", "639");
 
     }
 
@@ -38,7 +38,7 @@ public class PathFindingAlgorithm {
         StringBuilder build = new StringBuilder();
         while (read.hasNextLine()) {
             Scanner read1 = new Scanner(read.nextLine()).useDelimiter(" ");
-            int rand = (int) Math.ceil(Math.random() * 1000 + 1);
+            int rand = (int) Math.ceil(Math.random() * 1000);//all path lengths are between 1 and 1000 
             build.append(read1.next()).append(" ").append(read1.next()).append(" ").append(rand).append("\n");
             read1.close();
         }
@@ -46,7 +46,7 @@ public class PathFindingAlgorithm {
 
         PrintWriter write = new PrintWriter(new FileWriter(TXTFile, false));
         write.append(build);
-
+write.close();
     }
 
     public void start(String start, String end) throws FileNotFoundException {
@@ -68,6 +68,28 @@ public class PathFindingAlgorithm {
         getPathDjakstra(endNode[0], nodes, paths, distFromStart, path);
 
         System.out.println(distFromStart[endNode[1]] + "\n" + path[endNode[1]]);//print out the distance from the start to end and the path
+        
+        
+        
+        
+        
+        
+        int max=0;
+        int iNum=0;
+        for (int i = 0; i < numPaths; i++) {
+            if(verticies[i].getDistance()>max){
+            max = verticies[i].getDistance();
+            iNum=i;
+            }
+        }
+        
+            System.out.println(verticies[iNum].getDistance());
+        
+        
+        
+        
+        
+        
     }
 
     public graph[] putVertcicies() throws FileNotFoundException {//save all distances and nodes. all distances must be >0
